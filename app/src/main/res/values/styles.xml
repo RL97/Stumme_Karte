@@ -2,6 +2,7 @@
 
     <style name="Widget.Theme.Stumme_Karte.ActionBar.Fullscreen" parent="Widget.AppCompat.ActionBar">
         <item name="android:background">@color/black_overlay</item>
+        <item name="background">@color/black_overlay</item>
     </style>
 
     <style name="Widget.Theme.Stumme_Karte.ButtonBar.Fullscreen" parent="">
