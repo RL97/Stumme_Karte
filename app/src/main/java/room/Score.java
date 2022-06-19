@@ -50,4 +50,24 @@ public class Score {
     public Calendar getDate() {
         return date;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setMaxScore(int maxScore) {
+        this.maxScore = maxScore;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public void setPlayer(@NonNull String player) {
+        this.player = player;
+    }
+
+    public void setDate(@NonNull Calendar date) {
+        this.date = date;
+    }
 }
