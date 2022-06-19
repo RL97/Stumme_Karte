@@ -6,11 +6,14 @@ import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverter;
+import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import java.util.Calendar;
 import java.util.concurrent.Executors;
 
+@TypeConverters({CalendarTypeConverters.class})
 @Database(entities = {Score.class}, version = 1, exportSchema = false)
 public abstract class ScoreDatabase extends RoomDatabase {
 
