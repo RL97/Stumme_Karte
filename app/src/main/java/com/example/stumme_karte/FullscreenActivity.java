@@ -12,8 +12,20 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
+import android.widget.TextView;
 
 import com.example.stumme_karte.databinding.ActivityFullscreenBinding;
+
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import room.Score;
+import room.ScoreDatabase;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -32,6 +44,13 @@ public class FullscreenActivity extends AppCompatActivity {
 
     private ActivityFullscreenBinding binding;
 
+//    ScoreDatabase database;
+//
+//    // this executor will run all runnables/callables
+//    // that access the database
+//    // off the main thread
+//    private ExecutorService executor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +59,40 @@ public class FullscreenActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         mContentView = binding.fullscreenContent;
+        
+//        executor = Executors.newSingleThreadScheduledExecutor();
+//        database = ScoreDatabase.getDatabase(getApplicationContext());
+
+//        mContentView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // submitting a callable to the executorService returns a future
+//                // representing the pending results of the task
+//                Future f = executor.submit(new Callable<List<Score>>() {
+//                    @Override
+//                    public List<Score> call() throws Exception {
+//                        // database-access
+//                        List<Score> scores = database.scoreDAO().getAllScores();
+//                        return scores;
+//                    }
+//                });
+//
+//                try {
+//                    // the futures get method will return the tasks result upon successful completion
+//                    List<Score> scores = (List<Score>) f.get();
+//                    String str = "";
+//                    for (Score s : scores) {
+//                        str = str + s.getPlayer() + ": " + s.getScore() + "\n";
+//                    }
+//                    TextView tv = (TextView) mContentView;
+//                    tv.setText(str);
+//                } catch (ExecutionException e) {
+//                    e.printStackTrace();
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
     }
 
     @Override
