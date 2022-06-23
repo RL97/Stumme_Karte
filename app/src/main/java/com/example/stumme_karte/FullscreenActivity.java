@@ -4,12 +4,16 @@ import android.annotation.SuppressLint;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import android.graphics.Point;
 
-import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.TextureView;
+import android.view.View;
+import android.widget.Toast;
+import android.os.Build;
 import android.os.Handler;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 
@@ -24,6 +28,7 @@ public class FullscreenActivity extends AppCompatActivity {
      * Some older devices needs a small delay between UI widget updates
      * and a change of the status and navigation bar.
      */
+
     private static final int UI_ANIMATION_DELAY = 1000;
 
     private final Handler mHideHandler = new Handler();
@@ -38,9 +43,32 @@ public class FullscreenActivity extends AppCompatActivity {
 
         binding = ActivityFullscreenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        mContentView = binding.fullscreenContent;
     }
+
+    private View.OnTouchListener handleTouch = new View.OnTouchListener() {
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+
+            int x = (int) event.getX();
+            int y = (int) event.getY();
+
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    Log.i("TAG", "touched down");
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    Log.i("TAG", "moving: (" + x + ", " + y + ")");
+                    break;
+                case MotionEvent.ACTION_UP:
+                    Log.i("TAG", "touched up");
+                    break;
+            }
+
+            return true;
+        }
+    };
+
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
