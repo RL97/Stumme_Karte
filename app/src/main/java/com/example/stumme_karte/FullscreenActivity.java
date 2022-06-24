@@ -65,7 +65,7 @@ public class FullscreenActivity extends AppCompatActivity {
 
         // drawer layout instance to toggle the menu icon to open
         // drawer and back button to close drawer
-        drawerLayout = findViewById(R.id.my_drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close);
 
         // pass the Open and Close toggle for the drawer layout listener
@@ -169,7 +169,6 @@ public class FullscreenActivity extends AppCompatActivity {
     // drawer when the icon is clicked
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
