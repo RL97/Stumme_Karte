@@ -51,6 +51,10 @@ public abstract class GameDatabase extends RoomDatabase {
                                 database.taskDAO().addTask(new Task("Dresden", 90, 50, 1));
                                 database.taskDAO().addTask(new Task("Augsburg", 50, 90, 1));
                                 database.taskDAO().addTask(new Task("Saarbruecken", 10, 50, 1));
+
+                                // TODO
+                                //  more tasks
+                                //  ensure precision of coordinates
                             }
                         });
                     }

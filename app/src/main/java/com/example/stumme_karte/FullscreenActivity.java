@@ -63,8 +63,13 @@ public class FullscreenActivity extends AppCompatActivity {
     // and whether the user guessed correctly
     private Hashtable<Integer, Boolean> gameState = new Hashtable<>();
 
-    public DrawerLayout drawerLayout;
-    public ActionBarDrawerToggle actionBarDrawerToggle;
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
+
+    // TODO
+    //  add class-global static attribute
+    //  defining (maybe 2-3%?) tolerance when checking whether
+    //  guessed location matches coordinates of tasks location
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +91,9 @@ public class FullscreenActivity extends AppCompatActivity {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if (result.getBoolean("startGame")) {
-                    // should later be replaced by method which selects random subset of tasks for the current game
+                    // TODO
+                    //  should later be replaced by method
+                    //  which selects random subset of tasks for the current game
                     gameTasks = availableTasks;
                     playGame();
                 }
@@ -94,37 +101,6 @@ public class FullscreenActivity extends AppCompatActivity {
         });
 
         showStartGameDialog();
-
-//        mContentView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                // submitting a callable to the executorService returns a future
-//                // representing the pending results of the task
-//                Future f = executor.submit(new Callable<List<Score>>() {
-//                    @Override
-//                    public List<Score> call() throws Exception {
-//                        // database-access
-//                        List<Score> scores = database.scoreDAO().getAllScores();
-//                        return scores;
-//                    }
-//                });
-//
-//                try {
-//                    // the futures get method will return the tasks result upon successful completion
-//                    List<Score> scores = (List<Score>) f.get();
-//                    String str = "";
-//                    for (Score s : scores) {
-//                        str = str + s.getPlayer() + ": " + s.getScore() + "\n";
-//                    }
-//                    TextView tv = (TextView) mContentView;
-//                    tv.setText(str);
-//                } catch (ExecutionException e) {
-//                    e.printStackTrace();
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
     }
 
     @Override
@@ -200,6 +176,14 @@ public class FullscreenActivity extends AppCompatActivity {
     // drawer when the icon is clicked
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        // TODO
+        //  add (?ListView-)Activity to display scores
+        //  implement joker
+        //  implement app-quit
+        //  implement "manual" start of game in case initial dialog to start game is canceled
+        //  hookup to this method with switch-case
+
         if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
@@ -212,14 +196,18 @@ public class FullscreenActivity extends AppCompatActivity {
     }
 
     private void getAvailableTasks() {
+        // submitting a callable to the executorService returns a future
+        // representing the pending results of the task
         Future f = executor.submit(new Callable<List<Task>>() {
             @Override
             public List<Task> call() throws Exception {
+                // database-access
                 return database.taskDAO().getAllTasks();
             }
         });
 
         try {
+            // the futures get method will return the tasks result upon successful completion
             availableTasks = (List<Task>) f.get();
         } catch (ExecutionException e) {
             e.printStackTrace();
