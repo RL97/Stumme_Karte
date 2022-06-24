@@ -2,9 +2,12 @@ package com.example.stumme_karte;
 
 import android.annotation.SuppressLint;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentResultListener;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +17,7 @@ import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.stumme_karte.databinding.ActivityFullscreenBinding;
 
@@ -63,19 +67,17 @@ public class FullscreenActivity extends AppCompatActivity {
 
         mContentView = binding.fullscreenContent;
 
-        // drawer layout instance to toggle the menu icon to open
-        // drawer and back button to close drawer
-        drawerLayout = findViewById(R.id.drawer_layout);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close);
+        setupNavigationDrawer();
 
-        // pass the Open and Close toggle for the drawer layout listener
-        // to toggle the button
-        drawerLayout.addDrawerListener(actionBarDrawerToggle);
-        actionBarDrawerToggle.syncState();
+        getSupportFragmentManager().setFragmentResultListener("startRequest", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                Toast.makeText(getApplicationContext(),"TODO: START GAME " + result.getBoolean("startGame"),Toast.LENGTH_LONG).show();
+            }
+        });
 
-        // to make the Navigation drawer icon always appear on the action bar
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        
+        showStartGameDialog();
+
 //        executor = Executors.newSingleThreadScheduledExecutor();
 //        database = ScoreDatabase.getDatabase(getApplicationContext());
 
@@ -162,6 +164,21 @@ public class FullscreenActivity extends AppCompatActivity {
         }
     };
 
+    private void setupNavigationDrawer() {
+        // drawer layout instance to toggle the menu icon to open
+        // drawer and back button to close drawer
+        drawerLayout = findViewById(R.id.drawer_layout);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close);
+
+        // pass the Open and Close toggle for the drawer layout listener
+        // to toggle the button
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+
+        // to make the Navigation drawer icon always appear on the action bar
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
     // override the onOptionsItemSelected()
     // function to implement
     // the item click listener callback
@@ -173,5 +190,10 @@ public class FullscreenActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showStartGameDialog() {
+        DialogFragment startGameDialog = new StartGameDialogFragment();
+        startGameDialog.show(getSupportFragmentManager(), "startGameDialog");
     }
 }
