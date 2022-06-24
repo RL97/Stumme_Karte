@@ -10,12 +10,19 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 public class TaskMasterDialogFragment extends DialogFragment {
+
+    private String locationName;
+
+    public TaskMasterDialogFragment(String locationName) {
+        this.locationName = locationName;
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         return new AlertDialog.Builder(getActivity())
                 .setTitle("Finde die Stadt:")
-                .setMessage("Magdeburg")
+                .setMessage(locationName)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
