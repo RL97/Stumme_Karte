@@ -16,11 +16,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.stumme_karte.databinding.ActivityFullscreenBinding;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -28,8 +28,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import room.Score;
-import room.ScoreDatabase;
+import room.GameDatabase;
+import room.Task;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -48,12 +48,20 @@ public class FullscreenActivity extends AppCompatActivity {
 
     private ActivityFullscreenBinding binding;
 
-//    ScoreDatabase database;
-//
-//    // this executor will run all runnables/callables
-//    // that access the database
-//    // off the main thread
-//    private ExecutorService executor;
+    GameDatabase database;
+
+    // this executor will run all runnables/callables
+    // that access the database
+    // off the main thread
+    private ExecutorService executor;
+
+    // all tasks available
+    private List<Task> availableTasks;
+    // random subset of tasks for current game
+    private List<Task> gameTasks;
+    // gamestate will contain all tasks which were answered (id of tasks)
+    // and whether the user guessed correctly
+    private Hashtable<Integer, Boolean> gameState = new Hashtable<>();
 
     public DrawerLayout drawerLayout;
     public ActionBarDrawerToggle actionBarDrawerToggle;
@@ -67,19 +75,25 @@ public class FullscreenActivity extends AppCompatActivity {
 
         mContentView = binding.fullscreenContent;
 
+        executor = Executors.newSingleThreadScheduledExecutor();
+        database = GameDatabase.getDatabase(getApplicationContext());
+
+        getAvailableTasks();
+
         setupNavigationDrawer();
 
         getSupportFragmentManager().setFragmentResultListener("startRequest", this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                Toast.makeText(getApplicationContext(),"TODO: START GAME " + result.getBoolean("startGame"),Toast.LENGTH_LONG).show();
+                if (result.getBoolean("startGame")) {
+                    // should later be replaced by method which selects random subset of tasks for the current game
+                    gameTasks = availableTasks;
+                    playGame();
+                }
             }
         });
 
         showStartGameDialog();
-
-//        executor = Executors.newSingleThreadScheduledExecutor();
-//        database = ScoreDatabase.getDatabase(getApplicationContext());
 
 //        mContentView.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -195,5 +209,42 @@ public class FullscreenActivity extends AppCompatActivity {
     private void showStartGameDialog() {
         DialogFragment startGameDialog = new StartGameDialogFragment();
         startGameDialog.show(getSupportFragmentManager(), "startGameDialog");
+    }
+
+    private void getAvailableTasks() {
+        Future f = executor.submit(new Callable<List<Task>>() {
+            @Override
+            public List<Task> call() throws Exception {
+                return database.taskDAO().getAllTasks();
+            }
+        });
+
+        try {
+            availableTasks = (List<Task>) f.get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void playGame() {
+        // get first task which was not yet answered
+        Task currentTask = gameTasks.get(gameState.size());
+        // display taskmasterdialog with info about name of location to be guessed
+        showTaskMasterDialog(currentTask.getLocation());
+
+        // TODO
+        //  set onTouchListener or onClickListener on View in onCreate()
+        //  check whether coordinates of event match currentTask.getX()/currentTask.getY()
+        //  add result and currentTask.getId() to gameState
+        //  call playGame()
+        //  repeat until gameState.size() == gameTasks.size()
+        //  calculate and save Score
+    }
+
+    private void showTaskMasterDialog(String locationName) {
+        DialogFragment taskMasterDialog = new TaskMasterDialogFragment(locationName);
+        taskMasterDialog.show(getSupportFragmentManager(), "taskMasterDialog");
     }
 }
