@@ -8,12 +8,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentResultListener;
+import android.graphics.Point;
 
-import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.TextureView;
+import android.view.View;
+import android.widget.Toast;
+import android.os.Build;
 import android.os.Handler;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.MotionEvent;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 
@@ -36,6 +42,7 @@ import room.Task;
  * status bar and navigation/system bar) with user interaction.
  */
 public class FullscreenActivity extends AppCompatActivity {
+
     /**
      * Some older devices needs a small delay between UI widget updates
      * and a change of the status and navigation bar.
@@ -73,12 +80,14 @@ public class FullscreenActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         binding = ActivityFullscreenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        mContentView = binding.fullscreenContent;
+        mContentView = binding.map;
+        mContentView.setOnTouchListener(handleTouch);
 
         executor = Executors.newSingleThreadScheduledExecutor();
         database = GameDatabase.getDatabase(getApplicationContext());
@@ -102,6 +111,28 @@ public class FullscreenActivity extends AppCompatActivity {
 
         showStartGameDialog();
     }
+
+    private View.OnTouchListener handleTouch = new View.OnTouchListener() {
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+
+            int x = (int) event.getX();
+            int y = (int) event.getY();
+
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    Log.i("TAG", "touched down " + x + ", " + y);
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    Log.i("TAG", "moving: (" + x + ", " + y + ")");
+                    break;
+            }
+
+            return true;
+        }
+    };
+
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
