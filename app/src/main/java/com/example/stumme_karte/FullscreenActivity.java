@@ -39,10 +39,13 @@ public class FullscreenActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         binding = ActivityFullscreenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        mContentView= binding.map;
+        mContentView.setOnTouchListener(handleTouch);
     }
 
     private View.OnTouchListener handleTouch = new View.OnTouchListener() {
@@ -55,13 +58,10 @@ public class FullscreenActivity extends AppCompatActivity {
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    Log.i("TAG", "touched down");
+                    Log.i("TAG", "touched down " + x + ", " + y);
                     break;
                 case MotionEvent.ACTION_MOVE:
                     Log.i("TAG", "moving: (" + x + ", " + y + ")");
-                    break;
-                case MotionEvent.ACTION_UP:
-                    Log.i("TAG", "touched up");
                     break;
             }
 
