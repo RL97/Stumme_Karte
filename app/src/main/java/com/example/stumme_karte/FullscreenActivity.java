@@ -12,6 +12,7 @@ import android.graphics.Point;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.Toast;
@@ -66,12 +67,14 @@ public class FullscreenActivity extends AppCompatActivity {
     private List<Task> availableTasks;
     // random subset of tasks for current game
     private List<Task> gameTasks;
+    Task currentTask;
     // gamestate will contain all tasks which were answered (id of tasks)
     // and whether the user guessed correctly
     private Hashtable<Integer, Boolean> gameState = new Hashtable<>();
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
+
 
     // TODO
     //  add class-global static attribute
@@ -115,17 +118,25 @@ public class FullscreenActivity extends AppCompatActivity {
     private View.OnTouchListener handleTouch = new View.OnTouchListener() {
 
         @Override
+        // onTouch tells you were on the Display you clicked
+        // Added X, Y to get coordinates to compare with the defined Points
         public boolean onTouch(View v, MotionEvent event) {
+
 
             int x = (int) event.getX();
             int y = (int) event.getY();
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
+                    // Log for testing
                     Log.i("TAG", "touched down " + x + ", " + y);
                     break;
                 case MotionEvent.ACTION_MOVE:
+                    // Log for testing
                     Log.i("TAG", "moving: (" + x + ", " + y + ")");
+                    break;
+                case MotionEvent.ACTION_UP:
+                    double diff = compare(x,y);
                     break;
             }
 
@@ -159,6 +170,45 @@ public class FullscreenActivity extends AppCompatActivity {
             hide();
         }
     };
+    public double compare(double x, double y) {
+        // compare clicked coordinates with saved
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        double maxX = size.x;
+        double maxY = size.y;
+        //Log.i("TAG", "x,y "+maxX+ maxY);
+        double xInPercent = (100/maxX * x );
+        double yInPercent = (100/maxY * y );
+        //Log.i("TAG", "Rechnung  "+100+" / "+maxX+ " * " +x+ " = " +xInPercent);
+        double expectedX = currentTask.getX();
+        double expectedY = currentTask.getY();
+
+        double diff = 0;
+        /// Diff from X
+        if(xInPercent>expectedX){
+            diff += xInPercent-expectedX;
+        }
+        else{
+            diff += expectedX-xInPercent;
+        }
+        /// Diff from X
+        if(yInPercent>expectedY){
+            diff += yInPercent-expectedY;
+        }
+        else{
+            diff += expectedY-yInPercent;
+        }
+        Log.i("TAG", "Auswahl  "+ "Erwartet X = " +expectedX+ " auswahl X = "+ xInPercent);
+        Log.i("TAG", "Auswahl  "+ "Erwartet Y = " +expectedY+ " auswahl Y = "+ yInPercent+ " gesammte Diff = "+ diff);
+
+        return diff;
+         // TODO
+         //  Stätte anpassen Hamburg liegt im Meer laut definition
+         //  Welche abweichungen sind Legitim 10% also 5%x und 5% Y zusmamen?
+
+
+    }
 
     private void hide() {
         // Schedule a runnable to remove the status and navigation bar after a delay
@@ -249,7 +299,7 @@ public class FullscreenActivity extends AppCompatActivity {
 
     private void playGame() {
         // get first task which was not yet answered
-        Task currentTask = gameTasks.get(gameState.size());
+        currentTask = gameTasks.get(gameState.size());
         // display taskmasterdialog with info about name of location to be guessed
         showTaskMasterDialog(currentTask.getLocation());
 
