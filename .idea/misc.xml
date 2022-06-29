@@ -4,9 +4,13 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Robin/AndroidStudioProjects/Stumme_Karte/app/src/main/res/layout/activity_fullscreen.xml" value="0.25" />
+<<<<<<< HEAD
+        <entry key="..\:/Users/Robin/AndroidStudioProjects/Stumme_Karte/app/src/main/res/menu/drawer_menu.xml" value="0.22" />
+=======
         <entry key="..\:/Users/janik/StudioProjects/Stumme_Karte/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.218" />
         <entry key="..\:/Users/janik/StudioProjects/Stumme_Karte/app/src/main/res/drawable/ic_launcher_background.xml" value="0.218" />
         <entry key="..\:/Users/janik/StudioProjects/Stumme_Karte/app/src/main/res/layout/activity_fullscreen.xml" value="0.22" />
+>>>>>>> main
       </map>
     </option>
   </component>
