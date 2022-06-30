@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.stumme_karte.databinding.ActivityFullscreenBinding;
@@ -68,7 +69,7 @@ public class FullscreenActivity extends AppCompatActivity {
     // all tasks available
     private List<Task> availableTasks;
     // random subset of tasks for current game
-    private Hashtable<Integer, Task> gameTasks = new Hashtable<>();
+    private Hashtable<Integer, Task> gameTasks;
     Task currentTask = null;
     // gamestate will contain all tasks which were answered (id of tasks)
     // and whether the user guessed correctly
@@ -87,6 +88,10 @@ public class FullscreenActivity extends AppCompatActivity {
 
     private int score = 0;
     private int maxScore = 0;
+
+    private TextView jokerStatusTextView;
+    private int jokerAvailable = 3;
+    private int jokerUsed = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +112,8 @@ public class FullscreenActivity extends AppCompatActivity {
         getAvailableTasks();
 
         setupNavigationDrawer();
+
+        getSupportActionBar().setTitle("Joker verbleibend: " + " " + (jokerAvailable - jokerUsed));
 
         setFragmentResultListeners();
 
@@ -267,12 +274,26 @@ public class FullscreenActivity extends AppCompatActivity {
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                drawerLayout.closeDrawers();
                 switch (item.getItemId()) {
+                    case R.id.nav_newGame:
+                        if (currentTask != null) {
+                            showRestartDialog();
+                        } else {
+                            initGame();
+                        }
+                        return true;
                     case R.id.nav_scores:
                         Intent scoreIntent = new Intent(getApplicationContext(), ScoresActivity.class);
                         startActivity(scoreIntent);
                         return true;
                     case R.id.nav_joker:
+                        if (jokerUsed < jokerAvailable) {
+                            jokerUsed++;
+                            gameState.put(currentTask.getId(), true);
+                            getSupportActionBar().setTitle("Joker verbleibend: " + " " + (jokerAvailable - jokerUsed));
+                            playGame();
+                        }
                         return true;
                     case R.id.nav_quit:
                         showQuitDialog();
@@ -291,14 +312,6 @@ public class FullscreenActivity extends AppCompatActivity {
     // drawer when the icon is clicked
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        // TODO
-        //  add (?ListView-)Activity to display scores
-        //  implement joker
-        //  implement app-quit
-        //  implement "manual" start of game in case initial dialog to start game is canceled
-        //  hookup to this method with switch-case
-
         if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
@@ -331,16 +344,7 @@ public class FullscreenActivity extends AppCompatActivity {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if (result.getBoolean("startGame")) {
-                    // TODO
-                    //  should later be replaced by method
-                    //  which selects random subset of tasks for the current game
-                    for (Task t : availableTasks) {
-                        gameTasks.put(t.getId(), t);
-                    }
-//                    gameTasks = availableTasks;
-                    score = 0;
-                    maxScore = 0;
-                    playGame();
+                    initGame();
                 }
             }
         });
@@ -366,6 +370,29 @@ public class FullscreenActivity extends AppCompatActivity {
                 }
             }
         });
+
+        getSupportFragmentManager().setFragmentResultListener("restartConfirmRequest", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                if (result.getBoolean("restart")) {
+                    initGame();
+                }
+            }
+        });
+    }
+
+    private void initGame() {
+        gameTasks = new Hashtable<>();
+
+        // TODO
+        //  should later be replaced by method
+        //  which selects random subset of tasks for the current game
+        for (Task t : availableTasks) {
+            gameTasks.put(t.getId(), t);
+        }
+        score = 0;
+        maxScore = 0;
+        playGame();
     }
 
     private void playGame() {
@@ -407,5 +434,10 @@ public class FullscreenActivity extends AppCompatActivity {
     private void showQuitDialog() {
         DialogFragment quitDialog = new QuitDialogFragment();
         quitDialog.show(getSupportFragmentManager(), "quitDialog");
+    }
+
+    private void showRestartDialog() {
+        DialogFragment restartDialog = new RestartGameDialogFragment();
+        restartDialog.show(getSupportFragmentManager(), "restartDialog");
     }
 }
