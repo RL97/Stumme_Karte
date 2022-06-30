@@ -13,23 +13,18 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
-import android.view.TextureView;
 import android.view.View;
-import android.widget.Toast;
 import android.os.Build;
 import android.os.Handler;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.MotionEvent;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 
 import com.example.stumme_karte.databinding.ActivityFullscreenBinding;
 
-import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -313,14 +308,16 @@ public class FullscreenActivity extends AppCompatActivity {
     private void playGame() {
         if (gameState.size() == gameTasks.size()) {
             int score = 0;
+            int maxScore = 0;
             for (Hashtable.Entry<Integer, Boolean> entry : gameState.entrySet()) {
                 Integer taskId = entry.getKey();
                 Boolean result = entry.getValue();
+                maxScore += gameTasks.get(taskId).getPoints();
                 if (result) {
                     score += gameTasks.get(taskId).getPoints();
                 }
             }
-            Log.i("SysOut", "game ended with score " + score);
+            showScoreDialog(score, maxScore);
             return;
         }
 
@@ -334,5 +331,10 @@ public class FullscreenActivity extends AppCompatActivity {
     private void showTaskMasterDialog(String locationName) {
         DialogFragment taskMasterDialog = new TaskMasterDialogFragment(locationName);
         taskMasterDialog.show(getSupportFragmentManager(), "taskMasterDialog");
+    }
+
+    private void showScoreDialog(int score, int maxScore) {
+        DialogFragment scoreDialog = new ScoreDialogFragment(score, maxScore);
+        scoreDialog.show(getSupportFragmentManager(), "scoreDialog");
     }
 }
