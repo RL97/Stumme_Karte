@@ -5,11 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+<!--    custom content of score dialogue which allows the user to enter his name -->
+<!--    and shows instructions on how to begin a new game-->
+
     <TextView
         android:id="@+id/scoreDialogTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Starte ein neues Spiel indem du ..."
+        android:text="Ein neues Spiel kann über das Navigationsmenü gestartet werden."
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

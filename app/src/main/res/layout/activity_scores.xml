@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".ScoresActivity">
 
+<!--    layout of list activity for rendering of list of highscores-->
+
     <ListView
         android:id="@+id/scoreList"
         android:layout_width="match_parent"
