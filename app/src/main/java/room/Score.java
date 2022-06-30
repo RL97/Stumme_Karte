@@ -6,6 +6,15 @@ import androidx.room.PrimaryKey;
 
 import java.util.Calendar;
 
+// entity of score relation
+// @PrimaryKey annotation with argument autogenerate = true ensures its automatic generation
+// overridden toString method allows for automatic display of entity in listview
+// consists of:
+// id       ; primary key
+// maxScore ; score which could have been achieved in the played game
+// score    ; score which was achieved by the player
+// player   ; player name
+// date     ; date at which highscore was achieved
 @Entity(tableName = "scores")
 public class Score {
     @NonNull

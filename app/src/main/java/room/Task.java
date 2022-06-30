@@ -4,6 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+// entity of task relation
+// @PrimaryKey annotation with argument autogenerate = true ensures its automatic generation
+// consists of:
+// id       ; primary key
+// location ; name of the location
+// x        ; percentage based position of location on the x-axis
+// y        ; percentage based position of location on the y-axis
+// points   ; points awarded to the user on correctly guessing the locations position
 @Entity(tableName = "tasks")
 public class Task {
     @NonNull

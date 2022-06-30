@@ -7,6 +7,10 @@ import androidx.room.Query;
 
 import java.util.List;
 
+// dao of task entity
+// allows for
+// the retrieval of all tasks
+// the insertion of a new task (conflict strategy = replace ensures scores with the same primary keys cause override)
 @Dao
 public interface TaskDAO {
     @Query("SELECT * FROM tasks")
