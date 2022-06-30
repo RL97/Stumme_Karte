@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentResultListener;
+
+import android.content.Intent;
 import android.graphics.Point;
 
 import android.os.Bundle;
@@ -20,8 +22,10 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
+import android.widget.Toast;
 
 import com.example.stumme_karte.databinding.ActivityFullscreenBinding;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.Calendar;
 import java.util.Hashtable;
@@ -54,7 +58,7 @@ public class FullscreenActivity extends AppCompatActivity {
 
     private ActivityFullscreenBinding binding;
 
-    GameDatabase database;
+    private GameDatabase database;
 
     // this executor will run all runnables/callables
     // that access the database
@@ -65,7 +69,7 @@ public class FullscreenActivity extends AppCompatActivity {
     private List<Task> availableTasks;
     // random subset of tasks for current game
     private Hashtable<Integer, Task> gameTasks = new Hashtable<>();
-    Task currentTask;
+    Task currentTask = null;
     // gamestate will contain all tasks which were answered (id of tasks)
     // and whether the user guessed correctly
     private Hashtable<Integer, Boolean> gameState = new Hashtable<>();
@@ -156,6 +160,9 @@ public class FullscreenActivity extends AppCompatActivity {
         // Added X, Y to get coordinates to compare with the defined Points
         public boolean onTouch(View v, MotionEvent event) {
 
+            if (currentTask == null) {
+                return true;
+            }
 
             int x = (int) event.getX();
             int y = (int) event.getY();
@@ -280,6 +287,26 @@ public class FullscreenActivity extends AppCompatActivity {
 
         // to make the Navigation drawer icon always appear on the action bar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        NavigationView navView = (NavigationView) findViewById(R.id.navigation);
+        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.nav_scores:
+                        Intent scoreIntent = new Intent(getApplicationContext(), ScoresActivity.class);
+                        startActivity(scoreIntent);
+                        return true;
+                    case R.id.nav_joker:
+                        return true;
+                    case R.id.nav_quit:
+                        finish();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
     }
 
     // override the onOptionsItemSelected()
@@ -290,6 +317,7 @@ public class FullscreenActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+        Log.i("debug", "ITEM" + item.getItemId());
         // TODO
         //  add (?ListView-)Activity to display scores
         //  implement joker

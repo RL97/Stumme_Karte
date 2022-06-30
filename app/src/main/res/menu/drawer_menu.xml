@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="HardcodedText">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/nav_account"
+        android:id="@+id/nav_scores"
         android:title="Rangliste" />
 
     <item
-        android:id="@+id/nav_settings"
+        android:id="@+id/nav_joker"
         android:title="Joker" />
 
     <item
-        android:id="@+id/nav_logout"
+        android:id="@+id/nav_quit"
         android:title="Beenden" />
 
 </menu>

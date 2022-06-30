@@ -72,4 +72,11 @@ public class Score {
     public void setDate(@NonNull Calendar date) {
         this.date = date;
     }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return player + " - " + score + "/" + maxScore + "\n"
+                + date.get(Calendar.DAY_OF_MONTH) + "." + date.get(Calendar.MONTH) + "." + date.get(Calendar.YEAR);
+    }
 }
