@@ -53,7 +53,6 @@ public abstract class GameDatabase extends RoomDatabase {
                                 database.taskDAO().addTask(new Task("Saarbruecken", 11, 65, 1));
                                 database.taskDAO().addTask(new Task("Köln", 11, 50, 1));
                                 database.taskDAO().addTask(new Task("Stralsund", 75, 25, 1));
-                                database.taskDAO().addTask(new Task("Saarbruecken", 44, 37, 1));
                                 database.taskDAO().addTask(new Task("Flensburg", 40, 20, 1));
                                 database.taskDAO().addTask(new Task("Bremen", 33, 34, 1));
                                 database.taskDAO().addTask(new Task("Berlin", 80, 38, 1));
