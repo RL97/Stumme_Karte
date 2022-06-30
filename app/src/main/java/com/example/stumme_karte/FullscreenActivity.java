@@ -121,7 +121,8 @@ public class FullscreenActivity extends AppCompatActivity {
         display.getSize(size);
         maxX = size.x;
         maxY = size.y;
-        tolerance = (maxX * 10) / 100;
+        tolerance = 10;
+
     }
 
     private View.OnTouchListener handleTouch = new View.OnTouchListener() {
@@ -134,7 +135,7 @@ public class FullscreenActivity extends AppCompatActivity {
             if (currentTask == null) {
                 return true;
             }
-
+            // gets X and Y coordinates from the clicked Point
             int x = (int) event.getX();
             int y = (int) event.getY();
 
@@ -148,7 +149,9 @@ public class FullscreenActivity extends AppCompatActivity {
                     Log.i("TAG", "moving: (" + x + ", " + y + ")");
                     break;
                 case MotionEvent.ACTION_UP:
+                    // compares selected point with Database and returns the difference
                     double diff = compare(x,y);
+                    // check if difference is low enough to be tolerated
                     if (diff <= tolerance) {
                         gameState.put(currentTask.getId(), true);
                     } else {
@@ -191,11 +194,11 @@ public class FullscreenActivity extends AppCompatActivity {
 
     public double compare(double x, double y) {
         // compare clicked coordinates with saved
-        
-        //Log.i("TAG", "x,y "+maxX+ maxY);
+
+        // get persantage value of the with and length of the screen
         double xInPercent = (100/maxX * x );
         double yInPercent = (100/maxY * y );
-        //Log.i("TAG", "Rechnung  "+100+" / "+maxX+ " * " +x+ " = " +xInPercent);
+
         double expectedX = currentTask.getX();
         double expectedY = currentTask.getY();
 
@@ -214,6 +217,7 @@ public class FullscreenActivity extends AppCompatActivity {
         else{
             diff += expectedY-yInPercent;
         }
+        // Testing purpose
         Log.i("TAG", "Auswahl  "+ "Erwartet X = " +expectedX+ " auswahl X = "+ xInPercent);
         Log.i("TAG", "Auswahl  "+ "Erwartet Y = " +expectedY+ " auswahl Y = "+ yInPercent+ " gesammte Diff = "+ diff);
 

@@ -47,10 +47,21 @@ public abstract class GameDatabase extends RoomDatabase {
                                 database.scoreDAO().addScore(new Score(10, 8, "Spieler 2", c));
                                 database.scoreDAO().addScore(new Score(10, 10, "Spieler 3", c));
 
-                                database.taskDAO().addTask(new Task("Hamburg", 50, 10, 1));
-                                database.taskDAO().addTask(new Task("Dresden", 90, 50, 1));
-                                database.taskDAO().addTask(new Task("Augsburg", 50, 90, 1));
-                                database.taskDAO().addTask(new Task("Saarbruecken", 10, 50, 1));
+                                database.taskDAO().addTask(new Task("Hamburg", 45, 30, 1));
+                                database.taskDAO().addTask(new Task("Dresden", 85, 50, 1));
+                                database.taskDAO().addTask(new Task("Augsburg", 60, 73, 1));
+                                database.taskDAO().addTask(new Task("Saarbruecken", 11, 65, 1));
+                                database.taskDAO().addTask(new Task("Köln", 11, 50, 1));
+                                database.taskDAO().addTask(new Task("Stralsund", 75, 25, 1));
+                                database.taskDAO().addTask(new Task("Saarbruecken", 44, 37, 1));
+                                database.taskDAO().addTask(new Task("Flensburg", 40, 20, 1));
+                                database.taskDAO().addTask(new Task("Bremen", 33, 34, 1));
+                                database.taskDAO().addTask(new Task("Berlin", 80, 38, 1));
+                                database.taskDAO().addTask(new Task("Winterberg", 27, 47, 1));
+                                database.taskDAO().addTask(new Task("Karlsruhe", 27, 67, 1));
+                                database.taskDAO().addTask(new Task("München", 65, 73, 1));
+                                database.taskDAO().addTask(new Task("Kiel", 64, 24, 1));
+                                database.taskDAO().addTask(new Task("Basel", 18, 78, 1));
 
                                 // TODO
                                 //  more tasks
