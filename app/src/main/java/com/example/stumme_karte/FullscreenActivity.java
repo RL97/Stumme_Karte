@@ -78,9 +78,7 @@ public class FullscreenActivity extends AppCompatActivity {
 
 
     // TODO
-    //  add class-global static attribute
-    //  defining (maybe 2-3%?) tolerance when checking whether
-    //  guessed location matches coordinates of tasks location
+    //  adjustments needed
     private double tolerance;
     
     private double maxX;
@@ -223,11 +221,6 @@ public class FullscreenActivity extends AppCompatActivity {
         Log.i("TAG", "Auswahl  "+ "Erwartet Y = " +expectedY+ " auswahl Y = "+ yInPercent+ " gesammte Diff = "+ diff);
 
         return diff;
-         // TODO
-         //  Stätte anpassen Hamburg liegt im Meer laut definition
-         //  Welche abweichungen sind Legitim 10% also 5%x und 5% Y zusmamen?
-
-
     }
 
     private void hide() {
@@ -336,14 +329,6 @@ public class FullscreenActivity extends AppCompatActivity {
         currentTask = gameTasks.get(keys[gameState.size()]);
         // display taskmasterdialog with info about name of location to be guessed
         showTaskMasterDialog(currentTask.getLocation());
-
-        // TODO
-        //  set onTouchListener or onClickListener on View in onCreate()
-        //  check whether coordinates of event match currentTask.getX()/currentTask.getY()
-        //  add result and currentTask.getId() to gameState
-        //  call playGame()
-        //  repeat until gameState.size() == gameTasks.size()
-        //  calculate and save Score
     }
 
     private void showTaskMasterDialog(String locationName) {
