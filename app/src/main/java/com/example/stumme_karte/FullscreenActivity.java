@@ -72,7 +72,7 @@ public class FullscreenActivity extends AppCompatActivity {
     Task currentTask = null;
     // gamestate will contain all tasks which were answered (id of tasks)
     // and whether the user guessed correctly
-    private Hashtable<Integer, Boolean> gameState = new Hashtable<>();
+    private Hashtable<Integer, Boolean> gameState;
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
@@ -400,6 +400,7 @@ public class FullscreenActivity extends AppCompatActivity {
     }
 
     private void initGame() {
+        gameState = new Hashtable<>();
         gameTasks = new Hashtable<>();
         // generate random numbers to select random items
         // from Database while there 10 tasks in gameTasks with no duplicates
@@ -413,6 +414,7 @@ public class FullscreenActivity extends AppCompatActivity {
             }
         }
         //reset scores
+
         score = 0;
         maxScore = 0;
         playGame();
