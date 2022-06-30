@@ -288,7 +288,7 @@ public class FullscreenActivity extends AppCompatActivity {
                         startActivity(scoreIntent);
                         return true;
                     case R.id.nav_joker:
-                        if (jokerUsed < jokerAvailable) {
+                        if (jokerUsed < jokerAvailable && currentTask != null) {
                             jokerUsed++;
                             gameState.put(currentTask.getId(), true);
                             getSupportActionBar().setTitle("Joker verbleibend: " + " " + (jokerAvailable - jokerUsed));
@@ -427,6 +427,7 @@ public class FullscreenActivity extends AppCompatActivity {
     }
 
     private void showScoreDialog(int score, int maxScore) {
+        currentTask = null;
         DialogFragment scoreDialog = new ScoreDialogFragment(score, maxScore);
         scoreDialog.show(getSupportFragmentManager(), "scoreDialog");
     }
