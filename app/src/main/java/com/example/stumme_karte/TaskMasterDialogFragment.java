@@ -9,10 +9,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
+// Dialog fragment that shows the dialog which city you have to click while playing the game
+
 public class TaskMasterDialogFragment extends DialogFragment {
 
     private String locationName;
-
+    // generates the dialog if it gets a city
+    // ensures that a location can be displayed
     public TaskMasterDialogFragment(String locationName) {
         this.locationName = locationName;
     }

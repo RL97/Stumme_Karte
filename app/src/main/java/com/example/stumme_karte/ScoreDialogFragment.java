@@ -12,7 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-
+// Dialog fragment that shows the dialog for saving the score
+// request an player name from onclick methods that set fragment results to selected player name
 public class ScoreDialogFragment extends DialogFragment {
 
     private int score = 0;

@@ -8,7 +8,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-
+// Dialog fragment that shows the dialog if the game starts
+// request an results from onclick methods that set fragment results to ture or false
+// depending if you click start game or not
 public class StartGameDialogFragment extends DialogFragment {
     @NonNull
     @Override
