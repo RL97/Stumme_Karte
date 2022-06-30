@@ -108,36 +108,7 @@ public class FullscreenActivity extends AppCompatActivity {
 
         setupNavigationDrawer();
 
-        getSupportFragmentManager().setFragmentResultListener("startRequest", this, new FragmentResultListener() {
-            @Override
-            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                if (result.getBoolean("startGame")) {
-                    // TODO
-                    //  should later be replaced by method
-                    //  which selects random subset of tasks for the current game
-                    for (Task t : availableTasks) {
-                        gameTasks.put(t.getId(), t);
-                    }
-//                    gameTasks = availableTasks;
-                    score = 0;
-                    maxScore = 0;
-                    playGame();
-                }
-            }
-        });
-
-        getSupportFragmentManager().setFragmentResultListener("playerNameRequest", this, new FragmentResultListener() {
-            @Override
-            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                executor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        Calendar c = Calendar.getInstance();
-                        database.scoreDAO().addScore(new Score(maxScore, score, result.getString("playerName"), c));
-                    }
-                });
-            }
-        });
+        setFragmentResultListeners();
 
         showStartGameDialog();
     }
@@ -300,7 +271,7 @@ public class FullscreenActivity extends AppCompatActivity {
                     case R.id.nav_joker:
                         return true;
                     case R.id.nav_quit:
-                        finish();
+                        showQuitDialog();
                         return true;
                     default:
                         return false;
@@ -317,7 +288,6 @@ public class FullscreenActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        Log.i("debug", "ITEM" + item.getItemId());
         // TODO
         //  add (?ListView-)Activity to display scores
         //  implement joker
@@ -329,11 +299,6 @@ public class FullscreenActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void showStartGameDialog() {
-        DialogFragment startGameDialog = new StartGameDialogFragment();
-        startGameDialog.show(getSupportFragmentManager(), "startGameDialog");
     }
 
     private void getAvailableTasks() {
@@ -357,6 +322,48 @@ public class FullscreenActivity extends AppCompatActivity {
         }
     }
 
+    private void setFragmentResultListeners() {
+        getSupportFragmentManager().setFragmentResultListener("startRequest", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                if (result.getBoolean("startGame")) {
+                    // TODO
+                    //  should later be replaced by method
+                    //  which selects random subset of tasks for the current game
+                    for (Task t : availableTasks) {
+                        gameTasks.put(t.getId(), t);
+                    }
+//                    gameTasks = availableTasks;
+                    score = 0;
+                    maxScore = 0;
+                    playGame();
+                }
+            }
+        });
+
+        getSupportFragmentManager().setFragmentResultListener("playerNameRequest", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        Calendar c = Calendar.getInstance();
+                        database.scoreDAO().addScore(new Score(maxScore, score, result.getString("playerName"), c));
+                    }
+                });
+            }
+        });
+
+        getSupportFragmentManager().setFragmentResultListener("quitConfirmRequest", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                if (result.getBoolean("quit")) {
+                    finish();
+                }
+            }
+        });
+    }
+
     private void playGame() {
         if (gameState.size() == gameTasks.size()) {
             for (Hashtable.Entry<Integer, Boolean> entry : gameState.entrySet()) {
@@ -378,6 +385,11 @@ public class FullscreenActivity extends AppCompatActivity {
         showTaskMasterDialog(currentTask.getLocation());
     }
 
+    private void showStartGameDialog() {
+        DialogFragment startGameDialog = new StartGameDialogFragment();
+        startGameDialog.show(getSupportFragmentManager(), "startGameDialog");
+    }
+
     private void showTaskMasterDialog(String locationName) {
         DialogFragment taskMasterDialog = new TaskMasterDialogFragment(locationName);
         taskMasterDialog.show(getSupportFragmentManager(), "taskMasterDialog");
@@ -386,5 +398,10 @@ public class FullscreenActivity extends AppCompatActivity {
     private void showScoreDialog(int score, int maxScore) {
         DialogFragment scoreDialog = new ScoreDialogFragment(score, maxScore);
         scoreDialog.show(getSupportFragmentManager(), "scoreDialog");
+    }
+
+    private void showQuitDialog() {
+        DialogFragment quitDialog = new QuitDialogFragment();
+        quitDialog.show(getSupportFragmentManager(), "quitDialog");
     }
 }
