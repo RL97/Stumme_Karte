@@ -29,6 +29,7 @@ import com.example.stumme_karte.databinding.ActivityFullscreenBinding;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -66,7 +67,7 @@ public class FullscreenActivity extends AppCompatActivity {
     // all tasks available
     private List<Task> availableTasks;
     // random subset of tasks for current game
-    private List<Task> gameTasks;
+    private Hashtable<Integer, Task> gameTasks = new Hashtable<>();
     Task currentTask;
     // gamestate will contain all tasks which were answered (id of tasks)
     // and whether the user guessed correctly
@@ -80,6 +81,10 @@ public class FullscreenActivity extends AppCompatActivity {
     //  add class-global static attribute
     //  defining (maybe 2-3%?) tolerance when checking whether
     //  guessed location matches coordinates of tasks location
+    private double tolerance;
+    
+    private double maxX;
+    private double maxY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +96,15 @@ public class FullscreenActivity extends AppCompatActivity {
 
         mContentView = binding.map;
         mContentView.setOnTouchListener(handleTouch);
+
+        // setup device screen configuration
+        // and percentage based tolerance
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        maxX = size.x;
+        maxY = size.y;
+        tolerance = (maxX * 10) / 100;
 
         executor = Executors.newSingleThreadScheduledExecutor();
         database = GameDatabase.getDatabase(getApplicationContext());
@@ -106,7 +120,10 @@ public class FullscreenActivity extends AppCompatActivity {
                     // TODO
                     //  should later be replaced by method
                     //  which selects random subset of tasks for the current game
-                    gameTasks = availableTasks;
+                    for (Task t : availableTasks) {
+                        gameTasks.put(t.getId(), t);
+                    }
+//                    gameTasks = availableTasks;
                     playGame();
                 }
             }
@@ -118,7 +135,7 @@ public class FullscreenActivity extends AppCompatActivity {
     private View.OnTouchListener handleTouch = new View.OnTouchListener() {
 
         @Override
-        // onTouch tells you were on the Display you clicked
+        // onTouch will execute once the user interacts with the screen
         // Added X, Y to get coordinates to compare with the defined Points
         public boolean onTouch(View v, MotionEvent event) {
 
@@ -137,6 +154,12 @@ public class FullscreenActivity extends AppCompatActivity {
                     break;
                 case MotionEvent.ACTION_UP:
                     double diff = compare(x,y);
+                    if (diff <= tolerance) {
+                        gameState.put(currentTask.getId(), true);
+                    } else {
+                        gameState.put(currentTask.getId(), false);
+                    }
+                    playGame();
                     break;
             }
 
@@ -170,13 +193,10 @@ public class FullscreenActivity extends AppCompatActivity {
             hide();
         }
     };
+
     public double compare(double x, double y) {
         // compare clicked coordinates with saved
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        double maxX = size.x;
-        double maxY = size.y;
+        
         //Log.i("TAG", "x,y "+maxX+ maxY);
         double xInPercent = (100/maxX * x );
         double yInPercent = (100/maxY * y );
@@ -298,8 +318,22 @@ public class FullscreenActivity extends AppCompatActivity {
     }
 
     private void playGame() {
+        if (gameState.size() == gameTasks.size()) {
+            int score = 0;
+            for (Hashtable.Entry<Integer, Boolean> entry : gameState.entrySet()) {
+                Integer taskId = entry.getKey();
+                Boolean result = entry.getValue();
+                if (result) {
+                    score += gameTasks.get(taskId).getPoints();
+                }
+            }
+            Log.i("SysOut", "game ended with score " + score);
+            return;
+        }
+
         // get first task which was not yet answered
-        currentTask = gameTasks.get(gameState.size());
+        Integer[] keys = gameTasks.keySet().toArray(new Integer[gameTasks.keySet().size()]);
+        currentTask = gameTasks.get(keys[gameState.size()]);
         // display taskmasterdialog with info about name of location to be guessed
         showTaskMasterDialog(currentTask.getLocation());
 
