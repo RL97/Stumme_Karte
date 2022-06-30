@@ -31,6 +31,7 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -387,9 +388,17 @@ public class FullscreenActivity extends AppCompatActivity {
         // TODO
         //  should later be replaced by method
         //  which selects random subset of tasks for the current game
-        for (Task t : availableTasks) {
-            gameTasks.put(t.getId(), t);
+        while (gameTasks.size()<10){
+
+            Random rand = new Random();
+            int n = rand.nextInt(availableTasks.size());
+            if (gameTasks.get(availableTasks.get(n).getId()) == null){
+                gameTasks.put(availableTasks.get(n).getId(),availableTasks.get(n));
+                availableTasks.get(n);
+            }
         }
+
+
         score = 0;
         maxScore = 0;
         playGame();
