@@ -23,7 +23,6 @@ import android.view.MotionEvent;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.stumme_karte.databinding.ActivityFullscreenBinding;
 import com.google.android.material.navigation.NavigationView;
@@ -42,16 +41,15 @@ import room.GameDatabase;
 import room.Score;
 import room.Task;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
+
+ // An example full-screen activity that shows and hides the system UI (i.e.
+ // status bar and navigation/system bar) with user interaction.
+
 public class FullscreenActivity extends AppCompatActivity {
 
-    /**
-     * Some older devices needs a small delay between UI widget updates
-     * and a change of the status and navigation bar.
-     */
+    // Some older devices needs a small delay between UI widget updates
+    // and a change of the status and navigation bar.
+
     private static final int UI_ANIMATION_DELAY = 1000;
 
     private final Handler mHideHandler = new Handler();
@@ -79,22 +77,26 @@ public class FullscreenActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
-
-    // TODO
-    //  adjustments needed
+    // defined tolerance to check if answer is acceptable
     private double tolerance;
-    
+
+    // maximum values of the x and y coordinates from the screen
     private double maxX;
     private double maxY;
 
+    // global variables to save the score
     private int score = 0;
     private int maxScore = 0;
 
     private TextView jokerStatusTextView;
+
+    //  global variables to save amount of left jokers
     private int jokerAvailable = 3;
     private int jokerUsed = 0;
 
     @Override
+    // generate game relevant items variables and stats
+    // calla methods with have to run before the game starts
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
@@ -203,7 +205,7 @@ public class FullscreenActivity extends AppCompatActivity {
     public double compare(double x, double y) {
         // compare clicked coordinates with saved
 
-        // get persantage value of the with and length of the screen
+        // get percentage value of the width and length of the screen
         double xInPercent = (100/maxX * x );
         double yInPercent = (100/maxY * y );
 
@@ -211,23 +213,20 @@ public class FullscreenActivity extends AppCompatActivity {
         double expectedY = currentTask.getY();
 
         double diff = 0;
-        /// Diff from X
+        // Diff from expected x value and the selected x value
         if(xInPercent>expectedX){
             diff += xInPercent-expectedX;
         }
         else{
             diff += expectedX-xInPercent;
         }
-        /// Diff from X
+        // Diff from expected y value and the selected y value
         if(yInPercent>expectedY){
             diff += yInPercent-expectedY;
         }
         else{
             diff += expectedY-yInPercent;
         }
-        // Testing purpose
-        Log.i("TAG", "Auswahl  "+ "Erwartet X = " +expectedX+ " auswahl X = "+ xInPercent);
-        Log.i("TAG", "Auswahl  "+ "Erwartet Y = " +expectedY+ " auswahl Y = "+ yInPercent+ " gesammte Diff = "+ diff);
 
         return diff;
     }
@@ -274,9 +273,11 @@ public class FullscreenActivity extends AppCompatActivity {
         NavigationView navView = (NavigationView) findViewById(R.id.navigation);
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
+            // navigation menu for different activities
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 drawerLayout.closeDrawers();
                 switch (item.getItemId()) {
+                    // starts new game
                     case R.id.nav_newGame:
                         if (currentTask != null) {
                             showRestartDialog();
@@ -284,10 +285,14 @@ public class FullscreenActivity extends AppCompatActivity {
                             initGame();
                         }
                         return true;
+                    // shows ranking
                     case R.id.nav_scores:
                         Intent scoreIntent = new Intent(getApplicationContext(), ScoresActivity.class);
                         startActivity(scoreIntent);
                         return true;
+                    // uses joker
+                    // if you use a joker you can skipp a question
+                    // you still get the points for this question
                     case R.id.nav_joker:
                         if (jokerUsed < jokerAvailable && currentTask != null) {
                             jokerUsed++;
@@ -339,7 +344,9 @@ public class FullscreenActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
+    // add listeners for different game results and status
+    // show start dialogue and await start request result
+    // if request returns true, the game will start
     private void setFragmentResultListeners() {
         getSupportFragmentManager().setFragmentResultListener("startRequest", this, new FragmentResultListener() {
             @Override
@@ -352,11 +359,17 @@ public class FullscreenActivity extends AppCompatActivity {
 
         getSupportFragmentManager().setFragmentResultListener("playerNameRequest", this, new FragmentResultListener() {
             @Override
+            // save game stats in database on confirmation from player
+            // listens on fragment result to save scores
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
                         Calendar c = Calendar.getInstance();
+                        // add defined player name if player forgot to put one.
+                        if (result.getString("playerName").matches("")){
+                            database.scoreDAO().addScore(new Score(maxScore, score, "noName", c));
+                        }
                         database.scoreDAO().addScore(new Score(maxScore, score, result.getString("playerName"), c));
                     }
                 });
@@ -365,6 +378,8 @@ public class FullscreenActivity extends AppCompatActivity {
 
         getSupportFragmentManager().setFragmentResultListener("quitConfirmRequest", this, new FragmentResultListener() {
             @Override
+            // ends the game
+            // listens on fragment result quit game
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if (result.getBoolean("quit")) {
                     finish();
@@ -374,6 +389,8 @@ public class FullscreenActivity extends AppCompatActivity {
 
         getSupportFragmentManager().setFragmentResultListener("restartConfirmRequest", this, new FragmentResultListener() {
             @Override
+            // restarts the game
+            // listens on fragment result new game
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if (result.getBoolean("restart")) {
                     initGame();
@@ -384,10 +401,8 @@ public class FullscreenActivity extends AppCompatActivity {
 
     private void initGame() {
         gameTasks = new Hashtable<>();
-
-        // TODO
-        //  should later be replaced by method
-        //  which selects random subset of tasks for the current game
+        // generate random numbers to select random items
+        // from Database while there 10 tasks in gameTasks with no duplicates
         while (gameTasks.size()<10){
 
             Random rand = new Random();
@@ -397,20 +412,23 @@ public class FullscreenActivity extends AppCompatActivity {
                 availableTasks.get(n);
             }
         }
-
-
+        //reset scores
         score = 0;
         maxScore = 0;
         playGame();
     }
 
     private void playGame() {
+
+        // as long as there are available tasks to play keep this methode running
+
         if (gameState.size() == gameTasks.size()) {
             for (Hashtable.Entry<Integer, Boolean> entry : gameState.entrySet()) {
                 Integer taskId = entry.getKey();
                 Boolean result = entry.getValue();
                 maxScore += gameTasks.get(taskId).getPoints();
                 if (result) {
+                    // if answer is correct add Points
                     score += gameTasks.get(taskId).getPoints();
                 }
             }
@@ -424,28 +442,28 @@ public class FullscreenActivity extends AppCompatActivity {
         // display taskmasterdialog with info about name of location to be guessed
         showTaskMasterDialog(currentTask.getLocation());
     }
-
+    // Show methode to display game dialogues
     private void showStartGameDialog() {
         DialogFragment startGameDialog = new StartGameDialogFragment();
         startGameDialog.show(getSupportFragmentManager(), "startGameDialog");
     }
-
+    // Show methode to display master dialogues
     private void showTaskMasterDialog(String locationName) {
         DialogFragment taskMasterDialog = new TaskMasterDialogFragment(locationName);
         taskMasterDialog.show(getSupportFragmentManager(), "taskMasterDialog");
     }
-
+    // Show methode to display score dialogues
     private void showScoreDialog(int score, int maxScore) {
         currentTask = null;
         DialogFragment scoreDialog = new ScoreDialogFragment(score, maxScore);
         scoreDialog.show(getSupportFragmentManager(), "scoreDialog");
     }
-
+    // Show methode to display quiting dialogues
     private void showQuitDialog() {
         DialogFragment quitDialog = new QuitDialogFragment();
         quitDialog.show(getSupportFragmentManager(), "quitDialog");
     }
-
+    // Show methode to display restart dialogues
     private void showRestartDialog() {
         DialogFragment restartDialog = new RestartGameDialogFragment();
         restartDialog.show(getSupportFragmentManager(), "restartDialog");
