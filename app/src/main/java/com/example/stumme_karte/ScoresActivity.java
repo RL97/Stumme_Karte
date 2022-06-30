@@ -18,6 +18,8 @@ import room.GameDatabase;
 import room.Score;
 import room.Task;
 
+// activity that shows all saves scores in the database
+
 public class ScoresActivity extends AppCompatActivity {
 
     private GameDatabase database;
@@ -41,7 +43,7 @@ public class ScoresActivity extends AppCompatActivity {
         ListView listView = (ListView) findViewById(R.id.scoreList);
         listView.setAdapter(adapter);
     }
-
+    // load scores from database into a list
     private void getScores() {
         Future f = executor.submit(new Callable<List<Score>>() {
             @Override

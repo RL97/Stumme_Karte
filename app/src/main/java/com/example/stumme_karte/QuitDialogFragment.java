@@ -9,6 +9,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
+
+// Dialog fragment that shows the dialog for quitting the game
+// request an results from onclick methods that set fragment results to ture or false
 public class QuitDialogFragment extends DialogFragment {
     @NonNull
     @Override
