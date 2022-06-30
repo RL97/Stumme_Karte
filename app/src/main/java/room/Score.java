@@ -12,7 +12,8 @@ public class Score {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
-    private int maxScore = 10;
+    @NonNull
+    private int maxScore;
 
     @NonNull
     private int score;
@@ -23,7 +24,8 @@ public class Score {
     @NonNull
     private Calendar date;
 
-    public Score(int score, @NonNull String player, @NonNull Calendar date) {
+    public Score(int maxScore, int score, @NonNull String player, @NonNull Calendar date) {
+        this.maxScore = maxScore;
         this.score = score;
         this.player = player;
         this.date = date;

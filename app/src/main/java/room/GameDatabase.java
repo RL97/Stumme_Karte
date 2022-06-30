@@ -41,11 +41,11 @@ public abstract class GameDatabase extends RoomDatabase {
 
                                 Calendar c = Calendar.getInstance();
 
-                                database.scoreDAO().addScore(new Score(2, "Spieler 1", c));
-                                database.scoreDAO().addScore(new Score(4, "Spieler 2", c));
-                                database.scoreDAO().addScore(new Score(6, "Spieler 1", c));
-                                database.scoreDAO().addScore(new Score(8, "Spieler 2", c));
-                                database.scoreDAO().addScore(new Score(10, "Spieler 3", c));
+                                database.scoreDAO().addScore(new Score(10, 2, "Spieler 1", c));
+                                database.scoreDAO().addScore(new Score(10, 4, "Spieler 2", c));
+                                database.scoreDAO().addScore(new Score(10, 6, "Spieler 1", c));
+                                database.scoreDAO().addScore(new Score(10, 8, "Spieler 2", c));
+                                database.scoreDAO().addScore(new Score(10, 10, "Spieler 3", c));
 
                                 database.taskDAO().addTask(new Task("Hamburg", 50, 10, 1));
                                 database.taskDAO().addTask(new Task("Dresden", 90, 50, 1));

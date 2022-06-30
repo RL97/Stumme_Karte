@@ -23,6 +23,7 @@ import android.view.WindowInsetsController;
 
 import com.example.stumme_karte.databinding.ActivityFullscreenBinding;
 
+import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -32,6 +33,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import room.GameDatabase;
+import room.Score;
 import room.Task;
 
 /**
@@ -79,6 +81,9 @@ public class FullscreenActivity extends AppCompatActivity {
     private double maxX;
     private double maxY;
 
+    private int score = 0;
+    private int maxScore = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -90,14 +95,7 @@ public class FullscreenActivity extends AppCompatActivity {
         mContentView = binding.map;
         mContentView.setOnTouchListener(handleTouch);
 
-        // setup device screen configuration
-        // and percentage based tolerance
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        maxX = size.x;
-        maxY = size.y;
-        tolerance = (maxX * 10) / 100;
+        setupConfiguration();
 
         executor = Executors.newSingleThreadScheduledExecutor();
         database = GameDatabase.getDatabase(getApplicationContext());
@@ -117,12 +115,38 @@ public class FullscreenActivity extends AppCompatActivity {
                         gameTasks.put(t.getId(), t);
                     }
 //                    gameTasks = availableTasks;
+                    score = 0;
+                    maxScore = 0;
                     playGame();
                 }
             }
         });
 
+        getSupportFragmentManager().setFragmentResultListener("playerNameRequest", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        Calendar c = Calendar.getInstance();
+                        database.scoreDAO().addScore(new Score(maxScore, score, result.getString("playerName"), c));
+                    }
+                });
+            }
+        });
+
         showStartGameDialog();
+    }
+
+    private void setupConfiguration() {
+        // setup device screen configuration
+        // and percentage based tolerance
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        maxX = size.x;
+        maxY = size.y;
+        tolerance = (maxX * 10) / 100;
     }
 
     private View.OnTouchListener handleTouch = new View.OnTouchListener() {
@@ -307,8 +331,6 @@ public class FullscreenActivity extends AppCompatActivity {
 
     private void playGame() {
         if (gameState.size() == gameTasks.size()) {
-            int score = 0;
-            int maxScore = 0;
             for (Hashtable.Entry<Integer, Boolean> entry : gameState.entrySet()) {
                 Integer taskId = entry.getKey();
                 Boolean result = entry.getValue();
